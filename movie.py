@@ -4,4 +4,4 @@ class Movie:
         self.genre = genre
 
     def __repr__(self):
-        return f'<Movie "{movle.name}"'
+        return f'<Movie "{self.name}">'

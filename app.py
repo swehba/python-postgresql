@@ -1,4 +1,9 @@
 from movie import Movie
+from user import User
+
+user = User("Steve")
+print(user)
 
 movie = Movie("The Matrix", "sci-fi")
-print(movie.name)
+user.movies.append(movie)
+print(user.movies)
