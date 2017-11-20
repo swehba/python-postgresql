@@ -1,6 +1,4 @@
 from movie import Movie
-import csv
-import re
 
 
 class User:
@@ -19,6 +17,22 @@ class User:
     def unwatched_movies(self):
         return [movie for movie in self.movies if not movie.watched]
 
+    @property
+    def json(self):
+        return {
+            'name': self.name,
+            'movies': [movie.json for movie in self.movies]
+        }
+
+    @classmethod
+    def from_json(cls, json_data):
+        user = cls(json_data['name'])
+        for movie_data in json_data['movies']:
+            movie = Movie.from_json(movie_data)
+            user.movies.append(movie)
+
+        return user
+
     def add_movie(self, name, genre, watched=False):
         movie = Movie(name, genre, watched)
         self.movies.append(movie)
@@ -26,29 +40,3 @@ class User:
 
     def delete_movie(self, name):
         self.movies = [movie for movie in self.movies if movie.name == name]
-
-    def save_to_file(self):
-        with open(self.name + '.csv', 'w', newline='') as csvfile:
-            field_names = ['name', 'genre', 'watched']
-            writer = csv.DictWriter(csvfile, field_names)
-            writer.writeheader()
-            for movie in self.movies:
-                writer.writerow({'name': movie.name,
-                                 'genre': movie.genre,
-                                 'watched': str(movie.watched)})
-
-    @classmethod
-    def load_from_file(cls, filename):
-        pattern = re.compile(r'(.*)\.csv')
-        match = pattern.match(filename)
-        if not match:
-            return None
-
-        user = cls(match.group(1))
-        with open(filename, 'r', newline='') as csvfile:
-            reader = csv.DictReader(csvfile)
-            for row in reader:
-                movie = Movie(row['name'], row['genre'], bool(row['watched']))
-                user.movies.append(movie)
-
-        return user

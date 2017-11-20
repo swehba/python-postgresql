@@ -1,16 +1,17 @@
-from movie import Movie
 from user import User
+import json
 
-user = User("Steve")
-print(user)
+user = User('Steve')
+user.add_movie('The Matrix', 'sci-fi')
+user.add_movie('The Interview', 'comedy')
 
-movie = Movie("The Matrix", "sci-fi", True)
-user.movies.append(movie)
-print(f'all movies = {user.movies}')
-print(f'watched movies = {user.watched_movies}')
-print(f'unwatched movies = {user.unwatched_movies}')
+FILE_NAME = 'my_file.txt'
 
-user.save_to_file()
-user = User.load_from_file(user.name + ".csv")
-print(user)
-print(user.movies)
+with open(FILE_NAME, 'w') as f:
+    json.dump(user.json, f, indent=4)
+
+with open('my_file.txt', 'r') as f:
+    json_data = json.load(f)
+    user = User.from_json(json_data)
+
+print(json.dumps(user.json, indent=4))
